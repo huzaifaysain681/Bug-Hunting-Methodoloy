@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning and Reconnaissance Guide</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Planning and Reconnaissance</h1>
+                <p>Your Comprehensive Guide for Penetration Testing</p>
+                <a href="#step-by-step" class="btn">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="#hero">PenTest Guide</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#passive-recon">Passive Recon</a></li>
+                <li><a href="#active-recon">Active Recon</a></li>
+                <li><a href="#step-by-step">Steps</a></li>
+                <li><a href="#tips">Tips</a></li>
+                <li><a href="#workflow">Workflow</a></li>
+            </ul>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+
+            <!-- Passive Reconnaissance Section -->
+            <section id="passive-recon">
+                <h2><i class="fas fa-eye"></i> Passive Reconnaissance</h2>
+                <p>Gather information about the target without directly interacting with it to minimize detection risks.</p>
+
+                <!-- WHOIS Lookup -->
+                <div class="subsection">
+                    <h3>1.1 WHOIS Lookup</h3>
+                    <p><strong>Purpose:</strong> Retrieve domain registration details, including registrant information, registration dates, and name servers.</p>
+                    
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Command Line:</strong>
+                            <pre><code>whois example.com</code></pre>
+                        </li>
+                        <li><strong>Web-Based:</strong> <a href="https://www.whois.net/" target="_blank">Whois.net</a></li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Queries the WHOIS database to obtain registration details of the domain.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>Registrant’s contact information (if not private)</li>
+                        <li>Domain registration and expiration dates</li>
+                        <li>Name servers</li>
+                        <li>Administrative and technical contact details</li>
+                    </ul>
+
+                    <h4>Example Output:</h4>
+                    <pre><code>Domain Name: EXAMPLE.COM
+Registrar: Example Registrar, Inc.
+Registrant Name: John Doe
+Registrant Organization: Example Corp
+Registrant Email: johndoe@example.com
+Creation Date: 2010-01-01
+Expiration Date: 2025-01-01
+Name Server: NS1.EXAMPLE.COM
+Name Server: NS2.EXAMPLE.COM
+</code></pre>
+                </div>
+
+                <!-- DNS Enumeration -->
+                <div class="subsection">
+                    <h3>1.2 DNS Enumeration</h3>
+                    <p><strong>Purpose:</strong> Discover DNS records associated with the target domain, such as A, MX, NS, TXT records, and more.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>dnsenum:</strong>
+                            <pre><code>dnsenum example.com</code></pre>
+                        </li>
+                        <li><strong>dnsrecon:</strong>
+                            <pre><code>dnsrecon -d example.com</code></pre>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Queries DNS servers to retrieve various DNS records, identify subdomains, and gather information about mail servers, name servers, etc.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>IP addresses associated with the domain (A records)</li>
+                        <li>Mail servers (MX records)</li>
+                        <li>Name servers (NS records)</li>
+                        <li>Text records (TXT), including SPF, DKIM</li>
+                        <li>Possible subdomains</li>
+                    </ul>
+
+                    <h4>Example Output (dnsenum):</h4>
+                    <pre><code>*** Getting NS records for example.com
+NS Records:
+ns1.example.com
+ns2.example.com
+
+*** Getting A records for NS
+ns1.example.com: 192.0.2.1
+ns2.example.com: 192.0.2.2
+
+*** Getting MX records for example.com
+MX Records:
+10 mail.example.com
+
+*** Getting A records for MX
+mail.example.com: 192.0.2.3
+
+*** Getting TXT records for example.com
+v=spf1 include:_spf.example.com ~all
+</code></pre>
+                </div>
+
+                <!-- Subdomain Discovery -->
+                <div class="subsection">
+                    <h3>1.3 Subdomain Discovery</h3>
+                    <p><strong>Purpose:</strong> Identify subdomains associated with the target domain, revealing additional attack surfaces.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Sublist3r:</strong>
+                            <pre><code>sublist3r -d example.com</code></pre>
+                        </li>
+                        <li><strong>Amass:</strong>
+                            <pre><code>amass enum -d example.com</code></pre>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Enumerates subdomains by querying various sources, including search engines, DNS records, and public databases.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>List of discovered subdomains, such as <code>mail.example.com</code>, <code>dev.example.com</code>, <code>blog.example.com</code></li>
+                    </ul>
+
+                    <h4>Example Output (Sublist3r):</h4>
+                    <pre><code>www.example.com
+mail.example.com
+dev.example.com
+blog.example.com
+shop.example.com
+</code></pre>
+                </div>
+
+                <!-- Google Dorking -->
+                <div class="subsection">
+                    <h3>1.4 Google Dorking</h3>
+                    <p><strong>Purpose:</strong> Utilize advanced search queries to uncover hidden pages, sensitive information, or vulnerabilities indexed by search engines.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Manual via Google Search:</strong>
+                            <ul>
+                                <li><strong>Find login pages:</strong>
+                                    <pre><code>site:example.com inurl:login</code></pre>
+                                </li>
+                                <li><strong>Discover exposed sensitive files:</strong>
+                                    <pre><code>site:example.com filetype:pdf</code></pre>
+                                </li>
+                                <li><strong>Look for vulnerable scripts:</strong>
+                                    <pre><code>site:example.com inurl:php?id=</code></pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Leverages Google's search capabilities to find specific types of information that might not be easily accessible through normal browsing.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>URLs of login pages, admin panels</li>
+                        <li>Exposed documents like PDFs, DOCs containing sensitive information</li>
+                        <li>Potentially vulnerable script endpoints</li>
+                    </ul>
+
+                    <h4>Example Search Query:</h4>
+                    <pre><code>site:example.com inurl:admin</code></pre>
+
+                    <h4>Example Results:</h4>
+                    <pre><code>https://www.example.com/admin
+https://www.example.com/admin/login.php
+</code></pre>
+                </div>
+            </section>
+
+            <!-- Active Reconnaissance Section -->
+            <section id="active-recon">
+                <h2><i class="fas fa-bullseye"></i> Active Reconnaissance</h2>
+                <p>Directly interact with the target system to gather detailed information. This method carries a higher risk of detection but provides valuable insights.</p>
+
+                <!-- Port Scanning -->
+                <div class="subsection">
+                    <h3>2.1 Port Scanning</h3>
+                    <p><strong>Purpose:</strong> Identify open ports on the target system to determine which services are running.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Nmap (Network Mapper):</strong>
+                            <pre><code>nmap -sS -Pn example.com</code></pre>
+                            <ul>
+                                <li><code>-sS</code>: SYN scan (stealthy)</li>
+                                <li><code>-Pn</code>: Treat all hosts as online</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Sends packets to target ports to discover which ones are open, closed, or filtered.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>List of open ports and the services running on them (e.g., Port 80: HTTP, Port 443: HTTPS, Port 22: SSH)</li>
+                    </ul>
+
+                    <h4>Example Output:</h4>
+                    <pre><code>Starting Nmap 7.80 ( https://nmap.org ) at 2025-01-16 10:00 UTC
+Nmap scan report for example.com (93.184.216.34)
+Host is up (0.020s latency).
+Not shown: 997 closed ports
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+</code></pre>
+                </div>
+
+                <!-- Service Enumeration -->
+                <div class="subsection">
+                    <h3>2.2 Service Enumeration</h3>
+                    <p><strong>Purpose:</strong> Determine detailed information about the services running on the open ports, including versions and potential vulnerabilities.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Nmap Service and Version Detection:</strong>
+                            <pre><code>nmap -sV -p 22,80,443 example.com</code></pre>
+                            <ul>
+                                <li><code>-sV</code>: Service/version detection</li>
+                                <li><code>-p</code>: Specify ports</li>
+                            </ul>
+                        </li>
+                        <li><strong>Banner Grabbing with Netcat:</strong>
+                            <pre><code>nc -v example.com 22
+nc -v example.com 80
+nc -v example.com 443</code></pre>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Identifies the software and version running on each open port, helping to pinpoint potential vulnerabilities.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>Service names and versions (e.g., OpenSSH 7.4, Apache 2.4.29)</li>
+                        <li>Potential banners indicating configurations</li>
+                    </ul>
+
+                    <h4>Example Output (Nmap):</h4>
+                    <pre><code>PORT    STATE SERVICE VERSION
+22/tcp  open  ssh     OpenSSH 7.4 (protocol 2.0)
+80/tcp  open  http    Apache httpd 2.4.29 ((Ubuntu))
+443/tcp open  https   OpenSSL 1.1.1
+</code></pre>
+                </div>
+
+                <!-- OS Fingerprinting -->
+                <div class="subsection">
+                    <h3>2.3 OS Fingerprinting</h3>
+                    <p><strong>Purpose:</strong> Determine the operating system running on the target machine.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Nmap OS Detection:</strong>
+                            <pre><code>nmap -O example.com</code></pre>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Analyzes network responses to determine the operating system and its version.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>Detected OS (e.g., Linux 3.x, Windows Server 2016)</li>
+                        <li>Possible hardware details</li>
+                    </ul>
+
+                    <h4>Example Output:</h4>
+                    <pre><code>OS detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap scan report for example.com (93.184.216.34)
+Host is up (0.020s latency).
+Not shown: 997 closed ports
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+Device type: general purpose
+Running: Linux 3.X
+OS CPE: cpe:/o:linux:linux_kernel:3
+OS details: Linux 3.2 - 3.16
+</code></pre>
+                </div>
+
+                <!-- Vulnerability Scanning -->
+                <div class="subsection">
+                    <h3>2.4 Vulnerability Scanning</h3>
+                    <p><strong>Purpose:</strong> Identify known vulnerabilities in the services running on the target system.</p>
+
+                    <h4>Tools & Commands:</h4>
+                    <ul>
+                        <li><strong>Nmap NSE (Nmap Scripting Engine) Scripts:</strong>
+                            <pre><code>nmap --script vuln -p 22,80,443 example.com</code></pre>
+                        </li>
+                        <li><strong>OpenVAS:</strong>
+                            <pre><code>sudo openvas-start
+# Access OpenVAS through web interface and configure scan
+</code></pre>
+                        </li>
+                    </ul>
+
+                    <h4>What It Does:</h4>
+                    <p>Runs scripts or comprehensive scans to detect vulnerabilities such as outdated software versions, misconfigurations, or known exploits.</p>
+
+                    <h4>Expected Results:</h4>
+                    <ul>
+                        <li>List of identified vulnerabilities with descriptions, CVE numbers, and severity levels</li>
+                        <li>Recommendations for remediation</li>
+                    </ul>
+
+                    <h4>Example Output (Nmap NSE):</h4>
+                    <pre><code>PORT    STATE SERVICE VERSION
+22/tcp  open  ssh     OpenSSH 7.4 (protocol 2.0)
+| sshv1: 
+|   VULNERABLE:
+|   SSH Version 1 Enabled
+|     State: VULNERABLE
+|     IDs: CVE-1999-0527
+|
+80/tcp  open  http    Apache httpd 2.4.29 ((Ubuntu))
+| http-vuln-cve2017-5638: 
+|   VULNERABLE:
+|   Apache Struts2 Remote Code Execution
+|     State: VULNERABLE
+|     IDs: CVE-2017-5638
+|
+443/tcp open  https   OpenSSL 1.1.1
+| ssl-heartbleed:
+|   VULNERABLE:
+|   OpenSSL Heartbleed Vulnerability
+|     State: VULNERABLE
+|     IDs: CVE-2014-0160
+</code></pre>
+                </div>
+            </section>
+
+            <!-- Step-by-Step Approach Section -->
+            <section id="step-by-step">
+                <h2><i class="fas fa-list-ol"></i> Step-by-Step Approach</h2>
+                <p>Combining Passive and Active Reconnaissance into a structured workflow ensures comprehensive information gathering.</p>
+
+                <ol>
+                    <li>
+                        <h3>Step 1: Define the Target Scope</h3>
+                        <p><strong>Identify the target domain or IP range:</strong></p>
+                        <p>Example: <code>example.com</code> or <code>192.168.1.0/24</code></p>
+                    </li>
+                    <li>
+                        <h3>Step 2: Perform WHOIS Lookup</h3>
+                        <p><strong>Command:</strong></p>
+                        <pre><code>whois example.com</code></pre>
+                        <p><strong>Objective:</strong> Gather registration details and identify administrative contacts.</p>
+                    </li>
+                    <li>
+                        <h3>Step 3: Conduct DNS Enumeration</h3>
+                        <p><strong>Commands:</strong></p>
+                        <pre><code>dnsenum example.com
+dnsrecon -d example.com</code></pre>
+                        <p><strong>Objective:</strong> Retrieve DNS records and identify name servers.</p>
+                    </li>
+                    <li>
+                        <h3>Step 4: Discover Subdomains</h3>
+                        <p><strong>Commands:</strong></p>
+                        <pre><code>sublist3r -d example.com -o subdomains_sublist3r.txt
+amass enum -d example.com -o subdomains_amass.txt</code></pre>
+                        <p><strong>Objective:</strong> Enumerate subdomains to uncover additional entry points.</p>
+                    </li>
+                    <li>
+                        <h3>Step 5: Utilize Google Dorking</h3>
+                        <p><strong>Example Queries:</strong></p>
+                        <pre><code>site:example.com inurl:admin
+site:example.com filetype:pdf</code></pre>
+                        <p><strong>Objective:</strong> Find hidden or sensitive information indexed by search engines.</p>
+                    </li>
+                    <li>
+                        <h3>Step 6: Perform Port Scanning</h3>
+                        <p><strong>Command:</strong></p>
+                        <pre><code>nmap -sS -Pn example.com -oN nmap_ports.txt</code></pre>
+                        <p><strong>Objective:</strong> Identify open ports and associated services.</p>
+                    </li>
+                    <li>
+                        <h3>Step 7: Enumerate Services and Versions</h3>
+                        <p><strong>Command:</strong></p>
+                        <pre><code>nmap -sV -p 22,80,443 example.com -oN nmap_services.txt</code></pre>
+                        <p><strong>Objective:</strong> Determine software and versions running on open ports.</p>
+                    </li>
+                    <li>
+                        <h3>Step 8: Conduct OS Fingerprinting</h3>
+                        <p><strong>Command:</strong></p>
+                        <pre><code>nmap -O example.com -oN nmap_os.txt</code></pre>
+                        <p><strong>Objective:</strong> Identify the operating system of the target.</p>
+                    </li>
+                    <li>
+                        <h3>Step 9: Perform Vulnerability Scanning</h3>
+                        <p><strong>Commands:</strong></p>
+                        <pre><code>nmap --script vuln -p 22,80,443 example.com -oN nmap_vuln.txt
+sudo openvas-start</code></pre>
+                        <p><strong>Objective:</strong> Detect known vulnerabilities in the target's services.</p>
+                    </li>
+                    <li>
+                        <h3>Step 10: Analyze and Document Findings</h3>
+                        <p><strong>Objective:</strong> Compile the gathered information, assess potential vulnerabilities, and prioritize targets for further testing or remediation.</p>
+                    </li>
+                </ol>
+            </section>
+
+            <!-- Tips and Best Practices Section -->
+            <section id="tips">
+                <h2><i class="fas fa-lightbulb"></i> Additional Tips and Best Practices</h2>
+                <ul>
+                    <li><strong>Respect Legal Boundaries:</strong> Ensure you have explicit permission to perform reconnaissance and scanning on the target to avoid legal repercussions.</li>
+                    <li><strong>Minimize Detection Risk:</strong>
+                        <ul>
+                            <li>Use stealth scanning techniques (<code>-sS</code> in Nmap)</li>
+                            <li>Limit the rate of requests to avoid triggering intrusion detection systems (IDS)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Verify Information Accuracy:</strong> Cross-reference data from multiple sources to confirm its validity.</li>
+                    <li><strong>Automate Where Possible:</strong> Utilize scripts and tools to streamline repetitive tasks, but always review automated outputs for accuracy.</li>
+                    <li><strong>Maintain Comprehensive Logs:</strong> Keep detailed records of all commands run and data gathered for reporting and future reference.</li>
+                </ul>
+            </section>
+
+            <!-- Reconnaissance Workflow Section -->
+            <section id="workflow">
+                <h2><i class="fas fa-project-diagram"></i> Example Reconnaissance Workflow</h2>
+                <p>Here's an example of how you might execute the reconnaissance phase on <code>example.com</code>:</p>
+
+                <ol>
+                    <li>
+                        <h3>WHOIS Lookup:</h3>
+                        <pre><code>whois example.com > whois_example.txt</code></pre>
+                    </li>
+                    <li>
+                        <h3>DNS Enumeration:</h3>
+                        <pre><code>dnsenum example.com > dnsenum_example.txt
+dnsrecon -d example.com -o dnsrecon_example.txt</code></pre>
+                    </li>
+                    <li>
+                        <h3>Subdomain Discovery:</h3>
+                        <pre><code>sublist3r -d example.com -o subdomains_sublist3r.txt
+amass enum -d example.com -o subdomains_amass.txt</code></pre>
+                    </li>
+                    <li>
+                        <h3>Google Dorking:</h3>
+                        <p>Perform manual searches and document interesting findings.</p>
+                    </li>
+                    <li>
+                        <h3>Port Scanning:</h3>
+                        <pre><code>nmap -sS -Pn example.com -oN nmap_ports.txt</code></pre>
+                    </li>
+                    <li>
+                        <h3>Service Enumeration:</h3>
+                        <pre><code>nmap -sV -p 22,80,443 example.com -oN nmap_services.txt</code></pre>
+                    </li>
+                    <li>
+                        <h3>OS Fingerprinting:</h3>
+                        <pre><code>nmap -O example.com -oN nmap_os.txt</code></pre>
+                    </li>
+                    <li>
+                        <h3>Vulnerability Scanning:</h3>
+                        <pre><code>nmap --script vuln -p 22,80,443 example.com -oN nmap_vuln.txt
+sudo openvas-start</code></pre>
+                    </li>
+                    <li>
+                        <h3>Review and Analyze:</h3>
+                        <p>Combine all output files, identify patterns, potential vulnerabilities, and prioritize targets for further exploration.</p>
+                    </li>
+                </ol>
+            </section>
+
+            <!-- Conclusion Section -->
+            <section id="conclusion">
+                <h2><i class="fas fa-check-circle"></i> Conclusion</h2>
+                <p>The Planning and Reconnaissance phase is foundational for any cybersecurity assessment. By methodically gathering information through both passive and active techniques, you can build a comprehensive understanding of the target's infrastructure, identify potential vulnerabilities, and lay the groundwork for subsequent phases such as exploitation and post-exploitation. Always adhere to ethical guidelines and legal requirements when conducting reconnaissance to ensure responsible and lawful security assessments.</p>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Penetration Testing Guide. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Navigation Toggle -->
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            hamburger.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
